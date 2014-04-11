@@ -7,13 +7,18 @@
 
 				if (!controller.version()) return false;
 
-				element.on('click', 'a, button, input[type="submit"]', function(){
-					var category = 'UI Interactions';
-					var action = 'click';
+				element.on('mousedown', 'a, button, input[type="submit"]', function(){
+					var path = window.location.pathname;
+					var category = 'UI Interactions ' + '('+path+')';
+
+					var id = $(this).attr('id');
+					var classes = $(this).attr('class');
+					var bestAttr = (!!id)?id: (!!classes)?classes: '';
+					var action = 'click: ' + bestAttr;
+
 					var opt_label = $(this).text() || $(this).val() || '';
 					var opt_value = 0;
-					var path = window.location.pathname;
-					category = category + '('+path+')';
+
 					controller.track(category, action, opt_label, opt_value);
 				});
 
@@ -27,6 +32,7 @@
 				};
 
 				this.track = function(category, action, opt_label, opt_value){
+					//console.log(category, action, opt_label, opt_value)
 					if (_this.version() === 'universal')
 						ga('send', 'event', category, action, opt_label, opt_value);
 					if (_this.version() === 'ga')
